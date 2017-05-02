@@ -60,7 +60,7 @@ for file in files:
         read_length_ind.append(len(read))
         read_origin.append(x)
     count += 1
-    print('Done %s. %d out of %d more to go.' %(x, (len(gz_files_list)- count), len(gz_files_list)))
+    print('Done %s. %d out of %d more to go.' %(x, (len(files)- count), len(files)))
 s3 = pd.Series(read_length_ind, name='read_length')
 s4 = pd.Series(read_name_ind, name='read_name')
 s5 = pd.Series(read_origin, name='read_origin')
