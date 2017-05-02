@@ -18,19 +18,22 @@ parser = argparse.ArgumentParser(
         Check how 'os.walk' works in case it doesn't work for you. 
          """)
 
-parser.add_argument('INDIR', help="Full Path to directory that contains all fastq files", type=str)
+parser.add_argument('INDIR', help="Full Path to directory that contains all fasta/q files", type=str)
 parser.add_argument('OUTFILE', help="OUTFILE name", type=str)
+parser.add_argument('FILE_TYPE', help="fasta or fastq", type=str)
 
 args = parser.parse_args()
 fastq_folder = args.INDIR
 out = args.OUTFILE
+file_type = args.FILE_TYPE
 
-#get the filenames
-file_handler = os.walk(fastq_folder, topdown=False)
+#get the filenames using listdir now
+file_handler = os.listdir(fastq_folder)
+
 
 #this changed with initiating git.
-gz_files = (x for x in list(file_handler)[-1][2] if x[-2:] == 'gz' )
-gz_files_list = list(gz_files)
+files = [x for x in file_handler if file_type in x]
+
 
 #this initiates the variables saved in the final dataframe/csv file
 read_length_ind = []
@@ -45,8 +48,13 @@ os.chdir(fastq_folder)
 count = 0
 
 # for each .gz file, that is read in and three lists are produced
-for x in gz_files_list:
-    fastq_ind = HTSeq.FastqReader(x, "solexa")
+for file in files:
+    if 'fastq' == file_type:
+        fastq_ind = HTSeq.FastqReader(file, "solexa")
+    elif 'fasta' == file_type:
+        fastq_ind = HTSeq.FastaReader(file)
+    else:
+        print("Please indicate file format fasta or fastq")
     for read in fastq_ind:
         read_name_ind.append(read.name)
         read_length_ind.append(len(read))
